@@ -54,6 +54,13 @@ export interface SamlConfig {
   sign_requests: boolean;
   require_signed_assertions: boolean;
   admin_group: string | null;
+  /**
+   * Opt-in (backend migration 139): emit an absolute AssertionConsumer
+   * ServiceURL in the SAML AuthnRequest for stricter IdPs that reject the
+   * historical relative path. Off by default (pre-138 wire format).
+   * Defensive default `false` on backends that predate the field.
+   */
+  use_absolute_acs_url: boolean;
   is_enabled: boolean;
   created_at: string;
   updated_at: string;
@@ -133,6 +140,7 @@ export interface CreateSamlConfigRequest {
   sign_requests?: boolean;
   require_signed_assertions?: boolean;
   admin_group?: string;
+  use_absolute_acs_url?: boolean;
 }
 
 export interface UpdateSamlConfigRequest {
@@ -147,4 +155,5 @@ export interface UpdateSamlConfigRequest {
   sign_requests?: boolean;
   require_signed_assertions?: boolean;
   admin_group?: string;
+  use_absolute_acs_url?: boolean;
 }

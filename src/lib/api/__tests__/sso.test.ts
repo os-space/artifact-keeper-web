@@ -475,6 +475,24 @@ describe("ssoApi", () => {
     await expect(ssoApi.listSaml()).rejects.toBe("fail");
   });
 
+  it("adaptSaml defaults use_absolute_acs_url to false when absent (#521)", async () => {
+    // Pre-migration-139 backend never emits the field.
+    mockListSaml.mockResolvedValue({ data: [SDK_SAML], error: undefined });
+    const { ssoApi } = await import("../sso");
+    const out = await ssoApi.listSaml();
+    expect(out[0].use_absolute_acs_url).toBe(false);
+  });
+
+  it("adaptSaml propagates use_absolute_acs_url when present (#521)", async () => {
+    mockListSaml.mockResolvedValue({
+      data: [{ ...SDK_SAML, use_absolute_acs_url: true }],
+      error: undefined,
+    });
+    const { ssoApi } = await import("../sso");
+    const out = await ssoApi.listSaml();
+    expect(out[0].use_absolute_acs_url).toBe(true);
+  });
+
   it("getSaml returns config", async () => {
     mockGetSaml.mockResolvedValue({ data: SDK_SAML, error: undefined });
     const { ssoApi } = await import("../sso");

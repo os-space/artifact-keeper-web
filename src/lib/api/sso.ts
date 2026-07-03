@@ -139,6 +139,13 @@ function adaptSamlConfig(sdk: SdkSamlConfigResponse): SamlConfig {
     sign_requests: sdk.sign_requests,
     require_signed_assertions: sdk.require_signed_assertions,
     admin_group: sdk.admin_group ?? null,
+    // Defensive default: the SDK response type may predate migration 139
+    // (backend `use_absolute_acs_url`). Read through a cast and fall back
+    // to `false` (pre-138 relative ACS URL) so the UI is safe to deploy
+    // against an older backend that never emits the field.
+    use_absolute_acs_url:
+      (sdk as { use_absolute_acs_url?: boolean }).use_absolute_acs_url ??
+      false,
     is_enabled: sdk.is_enabled,
     created_at: sdk.created_at,
     updated_at: sdk.updated_at,
